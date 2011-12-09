@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import sys, re
+import sys
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
@@ -9,12 +9,30 @@ from Bio import AlignIO
 
 def findIndels(seq):
     # Find all occurences of indels
-    pattern = re.compile('\-')
+    if seq.find('-') != -1:
+        return True
+    else:
+        return False
     # Translate response to position indexes
-    pos = [(m.group(), m.start()) for m in pttrn.finditer(s)]
+    #pos = [(m.group(), m.start()) for m in pattern.finditer(seq)]
 
     return pos
 
+def checkAas(seq,rows):
+    """ Checks if the sequences has more than 50% unique AA:s. """
+
+    uniques = 0
+
+    for i in range(rows):
+        if uniques >= rows/2:
+            return True
+        char = seq[i]
+        count = seq.count(char)
+        if count == 1:
+            uniques += 1
+    
+    return False
+    
 def main():
     # Open the first file in the easy folder
     path = 'outfile.phy'
@@ -23,19 +41,37 @@ def main():
     handle = open(path, 'r')
     #handleOut = open('outfile2.phy', 'w')
     
-    #alignments = []
-
     # Parse the file
     alignment = AlignIO.read(handle, "phylip")
-    print "Number of rows: %i" % len(alignment)
 
-    # RETURNS ERROR! TypeError: Row and Column indexing is not currently supported,but may be in future.
-    # ON THE WEB IT SAYS YOU CAN DO IT, OLD VERSION?
-    #print alignment[6]
+    # No of sequences
+    rows = len(alignment)
 
-    for record in alignment:
-        seq = record.seq
-        pos = findIndels(seq)
+    # No of aas
+    aas = len(alignment[1].seq)
+    print aas
+
+    tempalignment = []
+
+##    for r in range(rows):
+##        tempalignment += ['']
+##    print tempalignment
+
+    for c in range(aas):
+        tempCol = ''
+        for r in range(rows):
+
+            tempCol += alignment[r].seq[c]
+
+        if not findIndels(tempCol):
+            if not checkAas(tempCol, rows):
+                for i in range(rows):
+                    tempalignment += transpose(tempCol)
+                print tempCol
+        else:
+            print 'Removed'
+
+            
         
     # Close the handles
     handle.close()
