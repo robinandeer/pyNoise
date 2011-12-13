@@ -32,6 +32,19 @@ def checkAas(seq,rows):
             uniques += 1
     
     return False
+
+def buildSeqCols(alignment,rows, aas):
+    """ Takes a multialignment, tansposes to columns and returns them. """
+
+    multSeq = []
+
+    for i in range(rows):
+        multSeq += [list(alignment[i].seq)]
+
+    # Transpose to cols
+    multSeqCols = zip(*multSeq)
+    
+    return multSeqCols
     
 def main():
     # Open the first file in the easy folder
@@ -49,29 +62,41 @@ def main():
 
     # No of aas
     aas = len(alignment[1].seq)
-    print aas
-
-    tempalignment = []
 
 ##    for r in range(rows):
 ##        tempalignment += ['']
 ##    print tempalignment
 
-    for c in range(aas):
-        tempCol = ''
-        for r in range(rows):
+    multSeqCols = buildSeqCols(alignment, rows, aas)
 
-            tempCol += alignment[r].seq[c]
+    for i in range(aas-1, 0, -1):
+        if findIndels(str(multSeqCols[i])) or checkAas(multSeqCols[i], rows):
+            multSeqCols.pop(i)
 
-        if not findIndels(tempCol):
-            if not checkAas(tempCol, rows):
-                for i in range(rows):
-                    tempalignment += transpose(tempCol)
-                print tempCol
-        else:
-            print 'Removed'
+    multSeq = zip(*multSeqCols)
 
-            
+    # Build output string in fasta format
+    consensusStr = ''
+    for i in range(rows):
+        consensusStr += '>' + alignment[i].id + '\n' + ''.join(multSeq[i]) + '\n'
+
+    # Dump to stdout
+    sys.stdout.write(consensusStr)
+
+##    tempalignment = []
+##    for c in range(aas):
+##        tempCol = ''
+##        for r in range(rows):
+##
+##            tempCol += alignment[r].seq[c]
+##
+##        if not findIndels(tempCol):
+##            if not checkAas(tempCol, rows):
+##                for i in range(rows):
+##                    tempalignment += transpose(tempCol)
+##                print tempCol
+##        else:
+##            print 'Removed'
         
     # Close the handles
     handle.close()
