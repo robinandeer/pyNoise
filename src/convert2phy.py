@@ -1,14 +1,4 @@
 #! /usr/bin/env python
-##import dendropy
-##path = 'appbio11/asymmetric_0.5/asymmetric_0.5.tree'
-##
-##tree1 = dendropy.Tree.get_from_path(path, schema="newick")
-##treeObj = dendropy.Tree(stream=open(path), schema="newick")
-##
-##tree_str = "[&R] (A, (B, (C, (D, E))));"
-##
-##print "Original:"
-##print tree1.as_ascii_plot()
 
 import sys
 from Bio.Seq import Seq

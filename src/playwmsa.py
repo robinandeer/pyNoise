@@ -73,6 +73,7 @@ def main():
         if findIndels(str(multSeqCols[i])) or checkAas(multSeqCols[i], rows):
             multSeqCols.pop(i)
 
+    # Transpose back to sequence rows
     multSeq = zip(*multSeqCols)
 
     # Build output string in fasta format
