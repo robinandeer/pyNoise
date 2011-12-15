@@ -3,9 +3,7 @@
 import sys
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from Bio import SeqIO
 from Bio import AlignIO
-#from Bio.Align import MultipleSeqAlignment
 
 def findIndels(seq):
     # Find all occurences of indels
@@ -13,8 +11,6 @@ def findIndels(seq):
         return True
     else:
         return False
-    # Translate response to position indexes
-    #pos = [(m.group(), m.start()) for m in pattern.finditer(seq)]
 
     return pos
 
@@ -24,8 +20,11 @@ def checkAas(seq,rows):
     uniques = 0
 
     for i in range(rows):
+        # If more than half are unique return True
         if uniques >= rows/2:
             return True
+
+        # Check each aa
         char = seq[i]
         count = seq.count(char)
         if count == 1:
@@ -47,12 +46,11 @@ def buildSeqCols(alignment,rows, aas):
     return multSeqCols
     
 def main():
-    # Open the first file in the easy folder
+    # Open the .phy-file from convert2phy.py
     path = '../data/outfile.phy'
 
     # Create handles for the files to be read and written to
     handle = open(path, 'r')
-    #handleOut = open('outfile2.phy', 'w')
     
     # Parse the file
     alignment = AlignIO.read(handle, "phylip")
@@ -63,13 +61,11 @@ def main():
     # No of aas
     aas = len(alignment[1].seq)
 
-##    for r in range(rows):
-##        tempalignment += ['']
-##    print tempalignment
-
+    # Transposes to cols
     multSeqCols = buildSeqCols(alignment, rows, aas)
 
-    for i in range(aas-1, 0, -1):
+    # Noise reduction step, for every residue position
+    for i in range(aas-1, -1, -1):
         if findIndels(str(multSeqCols[i])) or checkAas(multSeqCols[i], rows):
             multSeqCols.pop(i)
 
@@ -81,8 +77,15 @@ def main():
     for i in range(rows):
         consensusStr += '>' + alignment[i].id + '\n' + ''.join(multSeq[i]) + '\n'
 
-    # Dump to stdout
-    sys.stdout.write(consensusStr)
+    # Create handle for the output file
+    handleOut = open('../data/infile.fa', 'w')
+    
+    # Write to the output file in phylips format
+    handleOut.write(consensusStr)
+
+    # Close the handles
+    handle.close()
+    handleOut.close()
 
 ##    tempalignment = []
 ##    for c in range(aas):
@@ -98,9 +101,7 @@ def main():
 ##                print tempCol
 ##        else:
 ##            print 'Removed'
-        
-    # Close the handles
-    handle.close()
+            
 
 if __name__ == '__main__':
     main()

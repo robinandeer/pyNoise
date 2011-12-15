@@ -1,25 +1,29 @@
 #! /usr/bin/env python
 
 import dendropy
-path = '../data/asymmetric_0.5/asymmetric_0.5.tree'
+import sys
 
-# Set the same taxon_set for all trees!
-taxa = dendropy.TaxonSet()
+def main():
+    # Paths to reference and current tree to be compared
+    pathRef = '../data/asymmetric_0.5/asymmetric_0.5.tree'
+    pathCal = '../data/treeout.txt'
 
-tree1 = dendropy.Tree.get_from_path(path, schema="newick", taxon_set=taxa)
-tree2 = dendropy.Tree.get_from_path(path, schema="newick", taxon_set=taxa)
-#treeObj = dendropy.Tree(stream=open(path), schema="newick")
+    # Set the same taxon_set for all trees!
+    taxa = dendropy.TaxonSet()
 
-tree_str = "(((sp5,sp4),(((((((((((sp14,sp1),sp13),sp12),sp9),sp8),sp10),sp11),sp15),sp7),sp16),sp6)),sp3,sp2);"
+    refTree = dendropy.Tree.get_from_path(pathRef, schema="newick", taxon_set=taxa)
+    calTree = dendropy.Tree.get_from_path(pathCal, schema="newick", taxon_set=taxa)
+    
+    # Open result-file
+    handle = open('../results/distances.txt', 'a')
 
-treeStr = dendropy.Tree.get_from_string(tree_str, schema="newick", taxon_set=taxa)
-treeStr2 = dendropy.Tree.get_from_string(tree_str, schema="newick", taxon_set=taxa)
+    # Compare the trees and append to file, differentiates noise reduced and normal trees
+    if sys.argv[1] == 'reduced':
+        handle.write(str(dendropy.treecalc.robinson_foulds_distance(calTree, refTree)) + '\t')
+    else:
+        handle.write(str(dendropy.treecalc.robinson_foulds_distance(calTree, refTree)) + '\n')
+    
+    handle.close
 
-##print "Original:"
-##print treeStr.as_ascii_plot()
-
-##for i in range(5):
-##    print treeStr.leaf_nodes()
-
-# Compare the trees!
-print dendropy.treecalc.robinson_foulds_distance(tree1, tree2)
+if __name__ == '__main__':
+    main()

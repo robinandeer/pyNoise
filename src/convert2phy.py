@@ -3,9 +3,7 @@
 import sys
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from Bio import SeqIO
 from Bio import AlignIO
-#from Bio.Align import MultipleSeqAlignment
 
 def main():
 
@@ -18,18 +16,11 @@ def main():
 
     handle = open(sys.argv[1],'r')
     
-    # Open the first file in the easy folder
-    #path = '../data/asymmetric_0.5/s001.align.1.msl'
-
     # Create handles for the files to be read and written to
-    #handle = open(path, 'r')
     handleOut = open('../data/outfile.phy', 'w')
     
-    #alignments = []
-
     # Parse the file
     for record in AlignIO.parse(handle, "fasta"):
-        #alignments.append(record)
 
         # Write to the output file in phylips format
         handleOut.write(record.format('phylip'))
