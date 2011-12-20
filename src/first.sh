@@ -15,7 +15,7 @@ count=0
 rm ../results/distances.txt
 
 # Loop over all .msl in the specified folder
-for f in ../data/asymmetric_0.5/*.msl
+for f in ../data/symmetric_0.5/*.msl
 do
 	# Output	
 	clear

@@ -5,7 +5,8 @@ import sys
 
 def main():
     # Paths to reference and current tree to be compared
-    pathRef = '../data/asymmetric_0.5/asymmetric_0.5.tree'
+    #pathRef = '../data/asymmetric_0.5/asymmetric_0.5.tree'
+    pathRef = '../data/symmetric_0.5/symmetric_0.5.tree'
     pathCal = '../data/treeout.txt'
 
     # Set the same taxon_set for all trees!
@@ -19,9 +20,9 @@ def main():
 
     # Compare the trees and append to file, differentiates noise reduced and normal trees
     if sys.argv[1] == 'reduced':
-        handle.write(str(dendropy.treecalc.robinson_foulds_distance(calTree, refTree)) + '\t')
+        handle.write(str(dendropy.treecalc.symmetric_difference(calTree, refTree)) + '\t')
     else:
-        handle.write(str(dendropy.treecalc.robinson_foulds_distance(calTree, refTree)) + '\n')
+        handle.write(str(dendropy.treecalc.symmetric_difference(calTree, refTree)) + '\n')
     
     handle.close
 

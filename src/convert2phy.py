@@ -22,6 +22,10 @@ def main():
     # Parse the file
     for record in AlignIO.parse(handle, "fasta"):
 
+        # CONTROL: Check if the DNA sequence is relevant
+        if len(record.seq) < 30:
+            continue
+
         # Write to the output file in phylips format
         handleOut.write(record.format('phylip'))
 
